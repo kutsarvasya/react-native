@@ -9,10 +9,16 @@
     "web": "expo start --web"
   },
   "dependencies": {
+    "@types/react": "~18.2.14",
     "expo": "~49.0.8",
+    "expo-font": "~11.4.0",
     "expo-status-bar": "~1.6.0",
+    "formik": "^2.4.3",
     "react": "18.2.0",
-    "react-native": "0.72.4"
+    "react-hook-form": "^7.45.4",
+    "react-icons": "^4.10.1",
+    "react-native": "0.72.4",
+    "yup": "^1.2.0"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0"
