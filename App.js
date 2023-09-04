@@ -1,5 +1,7 @@
 import { StatusBar } from "expo-status-bar";
 import "react-native-gesture-handler";
+import { NavigationContainer } from "@react-navigation/native";
+import { createStackNavigator } from "@react-navigation/stack";
 import {
   StyleSheet,
   Text,
@@ -15,12 +17,7 @@ import RegistrationScreen from "./Screens/RegistrationScreen";
 import { useFonts } from "expo-font";
 import LoginScreen from "./Screens/LoginScreen";
 import { useState } from "react";
-
 export default function App() {
-  // const [isLogin, setIsLogin] = useState(false);
-  // const changeScreen = () => {
-  //   setIsLogin(!isLogin);
-  // };
   const [fontsLoaded] = useFonts({
     "Roboto-Regular": require("./assets/fonts/Roboto/Roboto-Regular.ttf"),
   });
@@ -28,22 +25,14 @@ export default function App() {
   if (!fontsLoaded) {
     return null;
   }
-  return <RegistrationScreen />;
+  const MainStack = createStackNavigator();
+  return (
+    <NavigationContainer>
+      <MainStack.Navigator initialRouteName="Login">
+        <MainStack.Screen name="Registration" component={RegistrationScreen} />
+        <MainStack.Screen name="Login" component={LoginScreen} />
+        {/* <MainStack.Screen name="Home" component={Home} /> */}
+      </MainStack.Navigator>
+    </NavigationContainer>
+  );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: "flex-end",
-  },
-  image: {
-    width: Dimensions.get("window").width,
-    height: Dimensions.get("window").height,
-    position: "absolute",
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    zIndex: -1,
-  },
-});

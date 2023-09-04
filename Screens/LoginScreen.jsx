@@ -33,7 +33,7 @@ const schema = yup
 
 const { width } = Dimensions.get("window");
 
-const LoginScreen = () => {
+const LoginScreen = ({ navigation }) => {
   const [passwordVisible, setPasswordVisible] = useState(false);
 
   const [isShowButton, setIsShowButton] = useState(false);
@@ -84,6 +84,11 @@ const LoginScreen = () => {
               paddingLeft: 16,
               paddingRight: 16,
               paddingTop: 92,
+              marginBottom: isShowButton
+                ? Platform.OS === "ios"
+                  ? -50
+                  : -140
+                : 0,
             }}
           >
             <Text
@@ -162,19 +167,19 @@ const LoginScreen = () => {
                 </TouchableOpacity>
               </View>
             </View>
-            {!isShowButton ? (
-              <>
-                <TouchableOpacity
-                  style={styles.btn}
-                  onPress={handleSubmit(onSubmit)}
-                >
-                  <Text style={styles.text}>Увійти</Text>
-                </TouchableOpacity>
-                <Text style={styles.textBtn}>
-                  Немає акаунту? Зареєструватися
-                </Text>
-              </>
-            ) : null}
+
+            <TouchableOpacity
+              style={styles.btn}
+              onPress={handleSubmit(onSubmit)}
+            >
+              <Text style={styles.text}>Увійти</Text>
+            </TouchableOpacity>
+            <Text
+              style={styles.textBtn}
+              onPress={() => navigation.navigate("Registration")}
+            >
+              Немає акаунту? Зареєструватися
+            </Text>
           </View>
         </KeyboardAvoidingView>
         <StatusBar style="auto" />
