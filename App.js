@@ -1,4 +1,5 @@
 import { StatusBar } from "expo-status-bar";
+import "react-native-gesture-handler";
 import {
   StyleSheet,
   Text,
@@ -7,6 +8,8 @@ import {
   KeyboardAvoidingView,
   Platform,
   Dimensions,
+  Keyboard,
+  TouchableWithoutFeedback,
 } from "react-native";
 import RegistrationScreen from "./Screens/RegistrationScreen";
 import { useFonts } from "expo-font";
@@ -14,10 +17,10 @@ import LoginScreen from "./Screens/LoginScreen";
 import { useState } from "react";
 
 export default function App() {
-  const [isLogin, setIsLogin] = useState(false);
-  const changeScreen = () => {
-    setIsLogin(!isLogin);
-  };
+  // const [isLogin, setIsLogin] = useState(false);
+  // const changeScreen = () => {
+  //   setIsLogin(!isLogin);
+  // };
   const [fontsLoaded] = useFonts({
     "Roboto-Regular": require("./assets/fonts/Roboto/Roboto-Regular.ttf"),
   });
@@ -25,19 +28,7 @@ export default function App() {
   if (!fontsLoaded) {
     return null;
   }
-  return (
-    <View style={styles.container}>
-      <Image style={styles.image} source={require("./assets/photo-bg.jpg")} />
-      <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : null}>
-        {isLogin ? (
-          <LoginScreen changeScreen={changeScreen} />
-        ) : (
-          <RegistrationScreen changeScreen={changeScreen} />
-        )}
-      </KeyboardAvoidingView>
-      <StatusBar style="auto" />
-    </View>
-  );
+  return <RegistrationScreen />;
 }
 
 const styles = StyleSheet.create({

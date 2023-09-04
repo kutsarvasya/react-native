@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   View,
   TextInput,
@@ -8,140 +8,195 @@ import {
   KeyboardAvoidingView,
   Platform,
   Dimensions,
+  TouchableWithoutFeedback,
+  Keyboard,
+  Image,
 } from "react-native";
-import { Formik } from "formik";
-import * as Yup from "yup";
+import { Controller, useForm } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
+import * as yup from "yup";
+import { StatusBar } from "expo-status-bar";
 
-const validationSchema = Yup.object().shape({
-  email: Yup.string()
-    .email("Must be a valid email")
-    .required("Email is required"),
-  password: Yup.string()
-    .min(6, "Too short password")
-    .max(12, "Too long")
-    .required("Password is required"),
-});
+const schema = yup
+  .object({
+    email: yup
+      .string()
+      .email("Must be a valid email")
+      .required("Email is required"),
+    password: yup
+      .string()
+      .min(6, "Too short password")
+      .max(12, "Too long")
+      .required("Password is required"),
+  })
+  .required();
+
 const { width } = Dimensions.get("window");
 
-const LoginScreen = ({ changeScreen }) => {
+const LoginScreen = () => {
   const [passwordVisible, setPasswordVisible] = useState(false);
-  const [emailInputShow, setEmailInputShow] = useState(false);
-  const [passwordInputShow, setPasswordInputShow] = useState(false);
+
   const [isShowButton, setIsShowButton] = useState(false);
+  useEffect(() => {
+    const keyboardDidShowListener = Keyboard.addListener(
+      "keyboardDidShow",
+      () => {
+        setIsShowButton(true);
+      }
+    );
+
+    const keyboardDidHideListener = Keyboard.addListener(
+      "keyboardDidHide",
+      () => {
+        setIsShowButton(false);
+      }
+    );
+
+    return () => {
+      keyboardDidShowListener.remove();
+      keyboardDidHideListener.remove();
+    };
+  }, []);
+  const {
+    control,
+    handleSubmit,
+    formState: { errors },
+  } = useForm({
+    resolver: yupResolver(schema),
+  });
+  const onSubmit = (data) => console.log(data);
   return (
-    <Formik
-      validationSchema={validationSchema}
-      onSubmit={(values) => {
-        console.log("error1");
-      }}
-      validateOnChange={false}
-      validateOnBlur={false}
-      initialValues={{ login: "", email: "", password: "" }}
-    >
-      {(props) => (
-        <View
-          style={{
-            width: "100%",
-            backgroundColor: "#fff",
-            borderTopLeftRadius: 25,
-            borderTopRightRadius: 25,
-            paddingLeft: 16,
-            paddingRight: 16,
-            paddingTop: 92,
-            // marginBottom: -150,
-          }}
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+      <View style={styles.container}>
+        <Image
+          style={styles.image}
+          source={require("../assets/photo-bg.jpg")}
+        />
+        <KeyboardAvoidingView
+          behavior={Platform.OS === "ios" ? "padding" : null}
         >
-          <Text
+          <View
             style={{
-              textAlign: "center",
-              fontSize: 30,
-              fontWeight: 500,
-              marginBottom: 33,
+              width: "100%",
+              backgroundColor: "#fff",
+              borderTopLeftRadius: 25,
+              borderTopRightRadius: 25,
+              paddingLeft: 16,
+              paddingRight: 16,
+              paddingTop: 92,
             }}
           >
-            Увійти
-          </Text>
-          <View style={{ gap: 16, marginBottom: 43 }}>
-            <TextInput
+            <Text
               style={{
-                ...styles.input,
-                borderColor: emailInputShow ? "#FF6C00" : "#E8E8E8",
+                textAlign: "center",
+                fontSize: 30,
+                fontWeight: 500,
+                marginBottom: 33,
               }}
-              placeholder="Адреса електронної пошти"
-              returnKeyType="done"
-              onChangeText={props.handleChange("email")}
-              error={props.errors.email}
-              onBlur={() => {
-                setEmailInputShow(false);
-                setIsShowButton(false);
-              }}
-              onFocus={() => {
-                setEmailInputShow(true);
-                setIsShowButton(true);
-              }}
-              placeholderTextColor={emailInputShow ? "#FF6C00" : "#BDBDBD"}
-              value={props.values.email}
-            />
-            <View style={{}}>
-              <TextInput
-                style={{
-                  ...styles.input,
-                  borderColor: passwordInputShow ? "#FF6C00" : "#E8E8E8",
-                }}
-                placeholderTextColor={passwordInputShow ? "#FF6C00" : "#BDBDBD"}
-                secureTextEntry={!passwordVisible}
-                placeholder="Пароль"
-                returnKeyType="done"
-                onChangeText={props.handleChange("password")}
-                error={props.errors.password}
-                onBlur={() => {
-                  setPasswordInputShow(false);
-                  setIsShowButton(false);
-                }}
-                onFocus={() => {
-                  setPasswordInputShow(true);
-                  setIsShowButton(true);
-                }}
-                value={props.values.password}
-              />
-              <TouchableOpacity
-                style={styles.showPassword}
-                onPress={() => {
-                  setPasswordVisible(!passwordVisible);
-                }}
-              >
-                <Text style={styles.showPasswordText}>
-                  {passwordVisible ? "Сховати" : "Показати"}
-                </Text>
-              </TouchableOpacity>
+            >
+              Увійти
+            </Text>
+            <View style={{ gap: 16, marginBottom: 43 }}>
+              <View>
+                <Controller
+                  control={control}
+                  rules={{
+                    required: true,
+                  }}
+                  render={({ field: { onChange, onBlur, value } }) => (
+                    <TextInput
+                      style={{
+                        ...styles.input,
+                        borderColor: errors.email ? "#E12800" : "#E8E8E8",
+                      }}
+                      placeholder="Адреса електронної пошти"
+                      onBlur={onBlur}
+                      onChangeText={onChange}
+                      value={value}
+                    />
+                  )}
+                  name="email"
+                />
+                {errors.email && (
+                  <Text style={styles.errorMessage}>
+                    {errors.email.message}
+                  </Text>
+                )}
+              </View>
+              <View style={{}}>
+                <Controller
+                  control={control}
+                  rules={{
+                    required: true,
+                  }}
+                  render={({ field: { onChange, onBlur, value } }) => (
+                    <TextInput
+                      style={{
+                        ...styles.input,
+                        borderColor: errors.password ? "#E12800" : "#E8E8E8",
+                      }}
+                      placeholder="Пароль"
+                      onBlur={onBlur}
+                      onChangeText={onChange}
+                      value={value}
+                      secureTextEntry={!passwordVisible}
+                    />
+                  )}
+                  name="password"
+                />
+
+                {errors.password && (
+                  <Text style={styles.errorMessage}>
+                    {errors.password.message}
+                  </Text>
+                )}
+                <TouchableOpacity
+                  style={styles.showPassword}
+                  onPress={() => {
+                    setPasswordVisible(!passwordVisible);
+                  }}
+                >
+                  <Text style={styles.showPasswordText}>
+                    {passwordVisible ? "Сховати" : "Показати"}
+                  </Text>
+                </TouchableOpacity>
+              </View>
             </View>
+            {!isShowButton ? (
+              <>
+                <TouchableOpacity
+                  style={styles.btn}
+                  onPress={handleSubmit(onSubmit)}
+                >
+                  <Text style={styles.text}>Увійти</Text>
+                </TouchableOpacity>
+                <Text style={styles.textBtn}>
+                  Немає акаунту? Зареєструватися
+                </Text>
+              </>
+            ) : null}
           </View>
-          {!isShowButton ? (
-            <>
-              <TouchableOpacity style={styles.btn}>
-                <Text style={styles.text}>Увійти</Text>
-              </TouchableOpacity>
-              <Text style={styles.textBtn} onPress={changeScreen}>
-                Немає акаунту? Зареєструватися
-              </Text>
-            </>
-          ) : null}
-        </View>
-      )}
-    </Formik>
+        </KeyboardAvoidingView>
+        <StatusBar style="auto" />
+      </View>
+    </TouchableWithoutFeedback>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    // flex: 1,
-    // gap: 16,
-    // justifyContent: "flex-end",
-    // marginBottom: 43,
-    // paddingTop: 150,
-    // height: "65%",
-    // paddingRight: 16,
-    // paddingLeft: 16,
+    flex: 1,
+    justifyContent: "flex-end",
+  },
+  image: {
+    width: Dimensions.get("window").width,
+    height: Dimensions.get("window").height,
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    zIndex: -1,
   },
   inputContainer: {
     // flex: 1,
@@ -154,6 +209,10 @@ const styles = StyleSheet.create({
     backgroundColor: "#F6F6F6",
     borderRadius: 8,
     fontSize: 16,
+  },
+  errorMessage: {
+    color: "#E12800",
+    paddingLeft: 10,
   },
   btn: {
     backgroundColor: "#FF6C00",
