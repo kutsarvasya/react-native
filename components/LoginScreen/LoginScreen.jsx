@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+// import { Ionicons } from "@expo/vector-icons";
 import {
   View,
   TextInput,
@@ -64,13 +65,16 @@ const LoginScreen = ({ navigation }) => {
   } = useForm({
     resolver: yupResolver(schema),
   });
-  const onSubmit = (data) => console.log(data);
+  const onSubmit = (data) => {
+    console.log(data);
+    navigation.navigate("Home");
+  };
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
       <View style={styles.container}>
         <Image
           style={styles.image}
-          source={require("../assets/photo-bg.jpg")}
+          source={require("../../assets/photo-bg.jpg")}
         />
         <KeyboardAvoidingView
           behavior={Platform.OS === "ios" ? "padding" : null}
@@ -101,6 +105,12 @@ const LoginScreen = ({ navigation }) => {
             >
               Увійти
             </Text>
+            {/* <TouchableOpacity
+              style={{ marginLeft: 20 }}
+              onPress={() => navigation.navigate("Home")}
+            >
+              <Ionicons name="arrow-back" size={24} color="#212121" />
+            </TouchableOpacity> */}
             <View style={{ gap: 16, marginBottom: 43 }}>
               <View>
                 <Controller

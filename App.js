@@ -13,10 +13,12 @@ import {
   Keyboard,
   TouchableWithoutFeedback,
 } from "react-native";
-import RegistrationScreen from "./Screens/RegistrationScreen";
+
+import RegistrationScreen from "./components/RegitrationScreen/RegistrationScreen";
 import { useFonts } from "expo-font";
-import LoginScreen from "./Screens/LoginScreen";
+import LoginScreen from "./components/LoginScreen/LoginScreen";
 import { useState } from "react";
+import Home from "./components/HomeScreen/Home";
 export default function App() {
   const [fontsLoaded] = useFonts({
     "Roboto-Regular": require("./assets/fonts/Roboto/Roboto-Regular.ttf"),
@@ -29,9 +31,21 @@ export default function App() {
   return (
     <NavigationContainer>
       <MainStack.Navigator initialRouteName="Login">
-        <MainStack.Screen name="Registration" component={RegistrationScreen} />
-        <MainStack.Screen name="Login" component={LoginScreen} />
-        {/* <MainStack.Screen name="Home" component={Home} /> */}
+        <MainStack.Screen
+          name="Registration"
+          component={RegistrationScreen}
+          options={{ headerShown: false }}
+        />
+        <MainStack.Screen
+          name="Login"
+          component={LoginScreen}
+          options={{ headerShown: false }}
+        />
+        <MainStack.Screen
+          name="Home"
+          component={Home}
+          options={{ headerShown: false }}
+        />
       </MainStack.Navigator>
     </NavigationContainer>
   );

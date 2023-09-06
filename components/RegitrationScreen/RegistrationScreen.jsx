@@ -16,6 +16,7 @@ import { Controller, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import { StatusBar } from "expo-status-bar";
+import BackBtn from "../BackBtn/BackBtn";
 
 const schema = yup
   .object({
@@ -74,13 +75,10 @@ const RegistrationScreen = ({ navigation }) => {
       <View style={styles.container}>
         <Image
           style={styles.image}
-          source={require("../assets/photo-bg.jpg")}
+          source={require("../../assets/photo-bg.jpg")}
         />
         <KeyboardAvoidingView
           behavior={Platform.OS === "ios" ? "padding" : null}
-          // style={{
-          //   top: isShowButton ? (Platform.OS === "ios" ? "24%" : "18%") : "10%",
-          // }}
         >
           <View
             style={{
@@ -99,7 +97,7 @@ const RegistrationScreen = ({ navigation }) => {
             }}
           >
             <Image
-              source={require("../assets/avatar.jpg")}
+              source={require("../../assets/avatar.jpg")}
               style={{
                 width: 120,
                 height: 120,
